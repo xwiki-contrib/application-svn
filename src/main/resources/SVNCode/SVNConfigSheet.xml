@@ -218,38 +218,42 @@ function tsuggest(field) {
  #set($spaces = $svnr.getDefaultSpace())
 #end
 #end
+#set ($configPageReference = $services.model.createDocumentReference($xcontext.database, $doc.space, $doc.name))
 ## CUSTOM action
 #if($request.action=="custom")
 {{html wiki=true clean=false}}
-&lt;form action="" method="get"&gt;
+&lt;form action="" method="get" class="xform"&gt;
 &lt;input type="hidden" name="action" value="list" /&gt;
-  $msg.get("svn.configsheet.custom.spacelist"): &lt;input type="text" name="spaces" value="" /&gt;&lt;input type="submit" value="$msg.get("svn.configsheet.listpages")" /&gt;
+  $msg.get("svn.configsheet.custom.spacelist"): &lt;input type="text" name="spaces" value="" style="width:auto" /&gt; &lt;span class="buttonwrapper"&gt; &lt;input type="submit" class="button" value="$msg.get("svn.configsheet.listpages")" /&gt;&lt;/span&gt;
 &lt;/form&gt;
-&lt;form action="" method="get"&gt;
+&lt;form action="" method="get" class="xform"&gt;
 &lt;input type="hidden" name="action" value="list" /&gt;
-  $msg.get("svn.configsheet.custom.space"): &lt;select name="spaces"&gt;
+  $msg.get("svn.configsheet.custom.space"): &lt;select name="spaces" style="width:auto"&gt;
 #foreach($space in $xwiki.spaces)
- &lt;option value="$space"&gt;$space&lt;/option&gt;
+ &lt;option value="$space" &gt;$space&lt;/option&gt;
 #end
 &lt;/select&gt;
-&lt;input type="submit" value="$msg.get("svn.configsheet.listpages")" /&gt;
+&lt;span class="buttonwrapper"&gt;
+&lt;input type="submit" class="button" value="$msg.get("svn.configsheet.listpages")" /&gt;
+&lt;/span&gt;
 &lt;/form&gt;
 {{/html}}  
 ## LIST ACTION
 #elseif($request.action=="list")
 {{html wiki=true}}
-&lt;form action="$doc.name"  method="post"&gt;
+&lt;form action="$doc.name"  method="post" class="xform"&gt;
 &lt;input type="hidden" name="action" value="commit" /&gt;
 &lt;input type="hidden" name="spaces" value="$!{spaces}" /&gt;
 &lt;ul&gt;
 #set($cmap = $!svnr.getChangedPages($spaces, $savedlist))
 #foreach($page in $cmap.keySet())
  #set($status = $cmap.get($page))
+
  ## encode the language of the document after the document name, after a dot. Will be processed on commit
 &lt;li&gt;$status.status &lt;input type="checkbox" name="page" value="${status.fullname}.$!{status.language}" /&gt; ${page} [[$msg.get("svn.configsheet.viewdiff")&gt;&gt;${doc.fullName}?action=compare&amp;page=${status.fullname}&amp;svnlanguage=${status.language}&amp;spaces=$!{spaces}||target=_blank]]
 #end
 &lt;/ul&gt;
-&lt;input type="submit" name="commit" value="$msg.get("svn.configsheet.commitall")" /&gt; &lt;input type="submit" name="update" value="$msg.get("svn.configsheet.updateall")" /&gt; &lt;input type="submit" name="export" value="$msg.get("svn.configsheet.exportall")" /&gt;
+&lt;input type="submit" class="button" name="commit" value="$msg.get("svn.configsheet.commitall")" /&gt; &lt;input type="submit" class="button" name="update" value="$msg.get("svn.configsheet.updateall")" /&gt; &lt;input type="submit" class="button" name="export" value="$msg.get("svn.configsheet.exportall")" /&gt;
 &lt;/form&gt;
 {{/html}}
 #elseif($request.export)
@@ -272,7 +276,19 @@ $msg.get("svn.configsheet.pagesupdated")
 * $page
 #end
 
-[[$msg.get("svn.configsheet.backtolist")&gt;&gt;${doc.fullName}?action=list]] - [[$msg.get("svn.configsheet.backtocustom")&gt;&gt;${doc.fullName}?action=custom]]
+
+{{html}}
+&lt;span class="buttonwrapper"&gt;
+&lt;a class="button" href="$xwiki.getURL($configPageReference, 'view','action=list')"&gt;
+$msg.get("svn.configsheet.backtolist")
+&lt;/a&gt;
+&lt;/span&gt;
+&lt;span class="buttonwrapper"&gt;
+&lt;a class="button" href="$xwiki.getURL($configPageReference, 'view','action=custom')"&gt;
+$msg.get("svn.configsheet.backtocustom")
+&lt;/a&gt;
+&lt;/span&gt;
+{{/html}}
 
 ## COMMIT ACTION with confirm
 #elseif($request.action=="commit" &amp;&amp; $request.confirm=="1")
@@ -289,7 +305,19 @@ $svnr.commitFiles($pagelist, $request.message)
 $msg.get("svn.configsheet.committsuccessfull")
 
 
-[[$msg.get("svn.configsheet.backtolist")&gt;&gt;${doc.fullName}?action=list]] - [[$msg.get("svn.configsheet.backtocustom")&gt;&gt;${doc.fullName}?action=custom]]
+
+{{html}}
+&lt;span class="buttonwrapper"&gt;
+&lt;a class="button" href="$xwiki.getURL($configPageReference, 'view','action=list')"&gt;
+$msg.get("svn.configsheet.backtolist")
+&lt;/a&gt;
+&lt;/span&gt;
+&lt;span class="buttonwrapper"&gt;
+&lt;a class="button" href="$xwiki.getURL($configPageReference, 'view','action=custom')"&gt;
+$msg.get("svn.configsheet.backtocustom")
+&lt;/a&gt;
+&lt;/span&gt;
+{{/html}}
 
 ## COMMIT ACTION before confirm
 #elseif($request.action=="commit")
@@ -297,7 +325,7 @@ $msg.get("svn.configsheet.committsuccessfull")
 $msg.get("svn.configsheet.confirmcommittingpage")
 
 {{html wiki=true}}
-&lt;form action="$doc.name" method="post"&gt;
+&lt;form action="$doc.name" method="post" class="xform"&gt;
 &lt;input type="hidden" name="action" value="commit" /&gt;
 &lt;input type="hidden" name="confirm" value="1" /&gt;
 &lt;input type="hidden" name="spaces" value="$!{spaces}" /&gt;
@@ -312,7 +340,9 @@ $msg.get("svn.configsheet.commitmessage"):
 &lt;textarea name="message" rows="5" cols="80"&gt;
 &lt;/textarea&gt;
 &lt;br /&gt;
-&lt;input type="submit" value="Commit" /&gt;
+&lt;span class="buttonwrapper"&gt;
+&lt;input type="submit" class="button" value="Commit" /&gt;
+&lt;/span&gt;
 &lt;/form&gt;
 {{/html}}
 ## VIEW STATUS ACTION
@@ -332,9 +362,23 @@ $svnr.showXMLDiff($pagedoc)
 
 ## OTHER ACTION
 #else
+{{html}}
+&lt;span class="buttonwrapper"&gt;
+&lt;a class="button" href="$xwiki.getURL($configPageReference, 'view','action=list')"&gt;
+$msg.get("svn.configsheet.listpages")
+&lt;/a&gt;
+&lt;/span&gt;
+&lt;span class="buttonwrapper"&gt;
+&lt;a class="button" href="$xwiki.getURL($configPageReference, 'view','action=custom')"&gt;
+$msg.get("svn.configsheet.customlist")
+&lt;/a&gt;
+&lt;/span&gt;
+{{/html}}
 
-[[$msg.get("svn.configsheet.listpages")&gt;&gt;${doc.fullName}?action=list]] - [[$msg.get("svn.configsheet.customlist")&gt;&gt;${doc.fullName}?action=custom]]
+
 #end
+
+
 
 #if($request.action)
 $msg.get("svn.configsheet.debug"):
