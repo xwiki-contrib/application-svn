@@ -24,6 +24,7 @@
   <syntaxId>xwiki/2.0</syntaxId>
   <hidden>false</hidden>
   <content>{{velocity}}
+$xwiki.ssx.use('SVNCode.SVNConfigSheet')##
 #if($request.title)
  #if($request.title=="")
   {{warning}}$msg.get("svn.createnewsvnconfig.error.titlemissing"){{/warning}}
@@ -58,7 +59,7 @@ $msg.get("svn.currentconfigs.noconfigs")
 {{html}}
 &lt;form action="" class="xform"&gt;
   &lt;label for="input_id1"&gt;$msg.get("svn.title"):&lt;/label&gt;
- &lt;input id="input_id1" type="text" name="title" size="60" value="" style="width:auto" /&gt;
+ &lt;input id="input_id1" type="text" name="title"  value="" class="svnInput" /&gt;
 
    &lt;span class="buttonwrapper"&gt;
      &lt;input class="button" type="submit" value="$msg.get("svn.createnewconfig")" /&gt;
