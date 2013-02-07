@@ -435,7 +435,8 @@ $svnr.showXMLDiff($pagedoc)
 (% class="buttonwrapper" %)[[$msg.get("svn.configsheet.listpages")&gt;&gt;${doc.fullName}?action=list||class="button"]](%%)  (% class="buttonwrapper" %)[[$msg.get("svn.configsheet.customlist")&gt;&gt;${doc.fullName}?action=custom||class="button"]](%%)
 #end
 
-#if($request.action)
+#set($debugFlag = false)
+#if($request.action&amp;&amp;$debugFlag)
 $msg.get("svn.configsheet.debug"):
 
 $svnr.getDebug()
