@@ -253,194 +253,202 @@ width:auto;
     </property>
   </object>
   <content>{{velocity}}
-$xwiki.ssx.use('SVNCode.SVNConfigSheet')##
+  $xwiki.ssx.use('SVNCode.SVNConfigSheet')##
 
-#if ("$!request.action" == "compare")
-= $msg.get('svn.configsheet.compare.title'): $request.page =
-#else
-= $msg.get("svn.configsheet.title"): $doc.name =
-#end
+  #if ("$!request.action" == "compare")
+    = $msg.get('svn.configsheet.compare.title'): $request.page =
+  #else
+    = $msg.get("svn.configsheet.title"): $doc.name =
+  #end
 
-#if(!$xwiki.hasProgrammingRights())
-#warning("This application cannot work without programming rights on the current page. Resave this page as an admin and retry.")
-#else
+  #if(!$xwiki.hasProgrammingRights())
+    #warning("This application cannot work without programming rights on the current page. Resave this page as an admin and retry.")
+  #else
 
-#if(!$request.action)
-#set($class = $doc.getObject('SVNCode.SVNConfigClass').xWikiClass)
+    #if(!$request.action)
+      #set($class = $doc.getObject('SVNCode.SVNConfigClass').xWikiClass)
 
-#foreach($prop in $class.properties)
- #set($tooltip = $prop.propertyClass.getTooltip($context.context))
-  **$doc.displayPrettyName($prop.name)** #if($tooltip!="SVNCode.SVNConfigClass_${prop.name}_tooltip")//(${tooltip})//#end
+      #foreach($prop in $class.properties)
+         #set($tooltip = $prop.propertyClass.getTooltip($context.context))
+         **$doc.displayPrettyName($prop.name)** #if($tooltip!="SVNCode.SVNConfigClass_${prop.name}_tooltip")//(${tooltip})//#end
 
-#if($context.action=="inline"&amp;&amp;$prop.name=="savedlist")
-  #set($path = $xwiki.getURL("SVNCode.SavedListSuggest", "view"))
-  #set($script = $path + "?xpage=plain&amp;outputSyntax=plain&amp;")
-{{html clean=false}}
-&lt;input type="text" id="SVNCode.SVNConfigClass_0_savedlist" name="SVNCode.SVNConfigClass_0_savedlist" onfocus="tsuggest(this);" value="$!doc.getValue("savedlist")" /&gt;
-&lt;script type="text/javascript"&gt;
-// &lt;![CDATA[
-function tsuggest(field) {
-  if (!field.suggest) {
-   field.suggest = new ajaxSuggest(field, {script:'$script', varname: 'input', seps:'', offsety: 13, 
-                                   callback: function(obj) { field.value=obj.info;} });
-   field.suggest.options.timeout = 5000;
-  }
-}
-// ]]&gt;
-&lt;/script&gt;
-{{/html}}
-#else
-   $doc.display($prop.getName())
-#end
+         #if($context.action=="inline"&amp;&amp;$prop.name=="savedlist")
+           #set($path = $xwiki.getURL("SVNCode.SavedListSuggest", "view"))
+           #set($script = $path + "?xpage=plain&amp;outputSyntax=plain&amp;")
+           {{html clean=false}}
+             &lt;input type="text" id="SVNCode.SVNConfigClass_0_savedlist" name="SVNCode.SVNConfigClass_0_savedlist" onfocus="tsuggest(this);" value="$!doc.getValue("savedlist")" /&gt;
+             &lt;script type="text/javascript"&gt;
+              // &lt;![CDATA[
+              function tsuggest(field) {
+               if (!field.suggest) {
+                 field.suggest = new ajaxSuggest(field, {script:'$script', varname: 'input', seps:'', offsety: 13, 
+                                     callback: function(obj) { field.value=obj.info;} });
+                 field.suggest.options.timeout = 5000;
+               }
+             }
 
-#end
-#end
-#if($request.action)
-#set($svnr = $xwiki.parseGroovyFromPage("SVNCode.SVNGroovy","SVNCode.SVNGroovy"))
-#set($ok = $svnr.setXWiki($xwiki, $context))
 
-#if(!$svnr.hasProgrammingRights())
-#warning("This application cannot work without programming rights on [[SVNCode.SVNGroovy]]. Resave this page as an admin and retry.")
-#end
+             // ]]&gt;
+            &lt;/script&gt;
+          {{/html}}
+         #else
+            $doc.display($prop.getName())
+         #end
 
-#set($ok = $svnr.setSVNConfig($doc.fullName))
-#set($ok = $svnr.initRepository())
-#if($request.spaces)
- #set($spaces = $request.spaces)
- #set($savedlist = "")
-#else
- #set($savedlist = $svnr.getSavedList())
- #set($spaces = $svnr.getDefaultSpace())
-#end
-#end
 
-## CUSTOM action
-#if($request.action=="custom")
-{{html wiki=true clean=false}}
-&lt;form action="" method="get" class="xform"&gt;
-&lt;input type="hidden" name="action" value="list" /&gt;
-  $msg.get("svn.configsheet.custom.spacelist"): &lt;input type="text" name="spaces" value="" class="svnInput" /&gt; &lt;span class="buttonwrapper"&gt; &lt;input type="submit" class="button" value="$msg.get("svn.configsheet.listpages")" /&gt;&lt;/span&gt;
-&lt;/form&gt;
-&lt;form action="" method="get" class="xform"&gt;
-&lt;input type="hidden" name="action" value="list" /&gt;
-  $msg.get("svn.configsheet.custom.space"): &lt;select name="spaces" class="svnSelect"&gt;
-#foreach($space in $xwiki.spaces)
- &lt;option value="$space"&gt;$space&lt;/option&gt;
-#end
-&lt;/select&gt;
-&lt;span class="buttonwrapper"&gt;
-&lt;input type="submit" class="button" value="$msg.get("svn.configsheet.listpages")" /&gt;
-&lt;/span&gt;
-&lt;/form&gt;
-{{/html}}  
-## LIST ACTION
-#elseif($request.action=="list")
-{{html wiki=true}}
-&lt;form action="$doc.name"  method="post" class="xform"&gt;
-&lt;input type="hidden" name="action" value="commit" /&gt;
-&lt;input type="hidden" name="spaces" value="$!{spaces}" /&gt;
-&lt;ul&gt;
-#set($cmap = $!svnr.getChangedPages($spaces, $savedlist))
-#foreach($page in $cmap.keySet())
- #set($status = $cmap.get($page))
+      #end
+    #end
+    #if($request.action)
+      #set($svnr = $xwiki.parseGroovyFromPage("SVNCode.SVNGroovy","SVNCode.SVNGroovy"))
+      #set($ok = $svnr.setXWiki($xwiki, $context))
 
- ## encode the language of the document after the document name, after a dot. Will be processed on commit
-&lt;li&gt;$status.status &lt;input type="checkbox" name="page" value="${status.fullname}.$!{status.language}" /&gt; ${page} &lt;a href=$xwiki.getURL(${doc.Name}, 'view', "action=compare&amp;page=${status.fullname}&amp;svnlanguage=${status.language}&amp;spaces=$!{spaces}") target="_blank" title="$msg.get("svn.configsheet.viewdiff")"&gt;&lt;img src = "$xwiki.getSkinFile('icons/silk/page_white_code.png')" /&gt;&lt;/a&gt;
-#end
-&lt;/ul&gt;
-&lt;input type="submit" class="button" name="commit" value="$msg.get("svn.configsheet.commitall")" /&gt; &lt;input type="submit" class="button" name="update" value="$msg.get("svn.configsheet.updateall")" /&gt; &lt;input type="submit" class="button" name="export" value="$msg.get("svn.configsheet.exportall")" /&gt;
-&lt;/form&gt;
-{{/html}}
-#elseif($request.export)
-#set($pagelist = $util.arrayList)
-#foreach($page in $request.getParameterValues("page"))
-#set($ok = $pagelist.add($page))
-#end
-$svnr.exportPages($doc.name, $pagelist)
-#set($ok = $context.setFinished(true))
-#elseif($request.update)
-#set($pagelist = $util.arrayList)
-#foreach($page in $request.getParameterValues("page"))
-#set($ok = $pagelist.add($page))
-#end
-#set($list = $svnr.updatePages($pagelist))
+      #if(!$svnr.hasProgrammingRights())
+        #warning("This application cannot work without programming rights on [[SVNCode.SVNGroovy]]. Resave this page as an admin and retry.")
+      #end
 
-$msg.get("svn.configsheet.pagesupdated")
+      #set($ok = $svnr.setSVNConfig($doc.fullName))
+      #set($ok = $svnr.initRepository())
+      #if($request.spaces)
+        #set($spaces = $request.spaces)
+        #set($savedlist = "")
+      #else
+        #set($savedlist = $svnr.getSavedList())
+        #set($spaces = $svnr.getDefaultSpace())
+      #end
+    #end
 
-#foreach($page in $list.keySet())
-* $page
-#end
+    ## CUSTOM action
+    #if($request.action=="custom")
+      {{html wiki=true clean=false}}
+        &lt;form action="" method="get" class="xform"&gt;
+          &lt;input type="hidden" name="action" value="list" /&gt;
+          $msg.get("svn.configsheet.custom.spacelist"): &lt;input type="text" name="spaces" value="" class="svnInput" /&gt; &lt;span class="buttonwrapper"&gt; &lt;input type="submit" class="button" value="$msg.get("svn.configsheet.listpages")" /&gt;&lt;/span&gt;
+        &lt;/form&gt;
+        &lt;form action="" method="get" class="xform"&gt;
+          &lt;input type="hidden" name="action" value="list" /&gt;
+          $msg.get("svn.configsheet.custom.space"): &lt;select name="spaces" class="svnSelect"&gt;
+          #foreach($space in $xwiki.spaces)
+            &lt;option value="$space"&gt;$space&lt;/option&gt;
+          #end
 
-(% class="buttonwrapper" %)msg.get("svn.configsheet.backtolist")&gt;&gt;${doc.fullName}?action=list||class="button"]](%%)  (% class="buttonwrapper" %)[[$msg.get("svn.configsheet.backtocustom")&gt;&gt;${doc.fullName}?action=custom||class="button"]](%%)
+          &lt;/select&gt;
+          &lt;span class="buttonwrapper"&gt;
+            &lt;input type="submit" class="button" value="$msg.get("svn.configsheet.listpages")" /&gt;
+          &lt;/span&gt;
+        &lt;/form&gt;
+      {{/html}}  
+    ## LIST ACTION
+    #elseif($request.action=="list")
+      {{html wiki=true}}
+        &lt;form action="$doc.name"  method="post" class="xform"&gt;
+          &lt;input type="hidden" name="action" value="commit" /&gt;
+          &lt;input type="hidden" name="spaces" value="$!{spaces}" /&gt;
+          &lt;ul&gt;
+            #set($cmap = $!svnr.getChangedPages($spaces, $savedlist))
+            #foreach($page in $cmap.keySet())
+              #set($status = $cmap.get($page))
 
-## COMMIT ACTION with confirm
-#elseif($request.action=="commit" &amp;&amp; $request.confirm=="1")
-$msg.get("svn.configsheet.committingpages"):
+              ## encode the language of the document after the document name, after a dot. Will be processed on commit
+              &lt;li&gt;$status.status &lt;input type="checkbox" name="page" value="${status.fullname}.$!{status.language}" /&gt; ${page} &lt;a href=$xwiki.getURL(${doc.Name}, 'view', "action=compare&amp;page=${status.fullname}&amp;svnlanguage=${status.language}&amp;spaces=$!{spaces}") target="_blank" title="$msg.get("svn.configsheet.viewdiff")"&gt;&lt;img src = "$xwiki.getSkinFile('icons/silk/page_white_code.png')" /&gt;&lt;/a&gt;
+            #end
 
-#set($pagelist = $util.arrayList)
-#foreach($page in $request.getParameterValues("page"))
- * $page
-#set($ok = $pagelist.add($page))
-#end
+          &lt;/ul&gt;
+          &lt;input type="submit" class="button" name="commit" value="$msg.get("svn.configsheet.commitall")" /&gt; &lt;input type="submit" class="button" name="update" value="$msg.get("svn.configsheet.updateall")" /&gt; &lt;input type="submit" class="button" name="export" value="$msg.get("svn.configsheet.exportall")" /&gt;
+        &lt;/form&gt;
+      {{/html}}
+    #elseif($request.export)
+      #set($pagelist = $util.arrayList)
+      #foreach($page in $request.getParameterValues("page"))
+        #set($ok = $pagelist.add($page))
+      #end
+      $svnr.exportPages($doc.name, $pagelist)
+      #set($ok = $context.setFinished(true))
+    #elseif($request.update)
+      #set($pagelist = $util.arrayList)
+      #foreach($page in $request.getParameterValues("page"))
+        #set($ok = $pagelist.add($page))
+      #end
+      #set($list = $svnr.updatePages($pagelist))
 
-$svnr.commitFiles($pagelist, $request.message)
+      $msg.get("svn.configsheet.pagesupdated")
 
-$msg.get("svn.configsheet.committsuccessfull")
+      #foreach($page in $list.keySet())
+        * $page
+      #end
 
-(% class="buttonwrapper" %)[[$msg.get("svn.configsheet.backtolist")&gt;&gt;${doc.fullName}?action=list||class="button"]](%%)  (% class="buttonwrapper" %)[[$msg.get("svn.configsheet.backtocustom")&gt;&gt;${doc.fullName}?action=custom||class="button"]](%%)
+      (% class="buttonwrapper" %)msg.get("svn.configsheet.backtolist")&gt;&gt;${doc.fullName}?action=list||class="button"]](%%)  (% class="buttonwrapper" %)[[$msg.get("svn.configsheet.backtocustom")&gt;&gt;${doc.fullName}?action=custom||class="button"]](%%)
 
-## COMMIT ACTION before confirm
-#elseif($request.action=="commit")
-## confirm commit
-$msg.get("svn.configsheet.confirmcommittingpage")
+      ## COMMIT ACTION with confirm
+    #elseif($request.action=="commit" &amp;&amp; $request.confirm=="1")
+      $msg.get("svn.configsheet.committingpages"):
 
-{{html wiki=true}}
-&lt;form action="$doc.name" method="post" class="xform"&gt;
-&lt;input type="hidden" name="action" value="commit" /&gt;
-&lt;input type="hidden" name="confirm" value="1" /&gt;
-&lt;input type="hidden" name="spaces" value="$!{spaces}" /&gt;
-## just pass the pages to commit further
-#foreach($page in $request.getParameterValues("page"))
-* $page
-&lt;input type="hidden" name="page" value="$!{page}" /&gt;
-#end
+      #set($pagelist = $util.arrayList)
+      #foreach($page in $request.getParameterValues("page"))
+        * $page
+        #set($ok = $pagelist.add($page))
+      #end
 
-$msg.get("svn.configsheet.commitmessage"):
-&lt;br /&gt;
-&lt;textarea name="message" rows="5" cols="80"&gt;
-&lt;/textarea&gt;
-&lt;br /&gt;
-&lt;span class="buttonwrapper"&gt;
-&lt;input type="submit" class="button" value="Commit" /&gt;
-&lt;/span&gt;
-&lt;/form&gt;
-{{/html}}
-## VIEW STATUS ACTION
-#elseif($request.action=="status")
+      $svnr.commitFiles($pagelist, $request.message)
 
-$svnr.getCommitStatus("|", "|", false)
+      $msg.get("svn.configsheet.committsuccessfull")
 
-## VIEW STATUS ACTION
-#elseif($request.action=="compare")
-{{html clean=false}}
-#set($pagedoc = $xwiki.getDocument($request.page))
-#if($request.svnlanguage)
-#set($pagedoc = $pagedoc.getTranslatedDocument($request.svnlanguage))
-#end
-$svnr.showXMLDiff($pagedoc)
-{{/html}}
+     (% class="buttonwrapper" %)[[$msg.get("svn.configsheet.backtolist")&gt;&gt;${doc.fullName}?action=list||class="button"]](%%)  (% class="buttonwrapper" %)[[$msg.get("svn.configsheet.backtocustom")&gt;&gt;${doc.fullName}?action=custom||class="button"]](%%)
 
-## OTHER ACTION
-#else
-(% class="buttonwrapper" %)[[$msg.get("svn.configsheet.listpages")&gt;&gt;${doc.fullName}?action=list||class="button"]](%%)  (% class="buttonwrapper" %)[[$msg.get("svn.configsheet.customlist")&gt;&gt;${doc.fullName}?action=custom||class="button"]](%%)
-#end
+     ## COMMIT ACTION before confirm
+   #elseif($request.action=="commit")
+      ## confirm commit
+      $msg.get("svn.configsheet.confirmcommittingpage")
 
-#if($request.action)
-$msg.get("svn.configsheet.debug"):
+      {{html wiki=true}}
+        &lt;form action="$doc.name" method="post" class="xform"&gt;
+          &lt;input type="hidden" name="action" value="commit" /&gt;
+          &lt;input type="hidden" name="confirm" value="1" /&gt;
+          &lt;input type="hidden" name="spaces" value="$!{spaces}" /&gt;
+          ## just pass the pages to commit further
+          #foreach($page in $request.getParameterValues("page"))
+            * $page
 
-$svnr.getDebug()
-#end
-#end
+            &lt;input type="hidden" name="page" value="$!{page}" /&gt;
+          #end
+
+
+          $msg.get("svn.configsheet.commitmessage"):
+          &lt;br /&gt;
+          &lt;textarea name="message" rows="5" cols="80"&gt;
+          &lt;/textarea&gt;
+          &lt;br /&gt;
+          &lt;span class="buttonwrapper"&gt;
+            &lt;input type="submit" class="button" value="Commit" /&gt;
+          &lt;/span&gt;
+        &lt;/form&gt;
+      {{/html}}
+      ## VIEW STATUS ACTION
+    #elseif($request.action=="status")
+
+      $svnr.getCommitStatus("|", "|", false)
+
+      ## VIEW STATUS ACTION
+    #elseif($request.action=="compare")
+      {{html clean=false}}
+        #set($pagedoc = $xwiki.getDocument($request.page))
+        #if($request.svnlanguage)
+          #set($pagedoc = $pagedoc.getTranslatedDocument($request.svnlanguage))
+        #end
+
+        $svnr.showXMLDiff($pagedoc)
+      {{/html}}
+
+      ## OTHER ACTION
+    #else
+      (% class="buttonwrapper" %)[[$msg.get("svn.configsheet.listpages")&gt;&gt;${doc.fullName}?action=list||class="button"]](%%)  (% class="buttonwrapper" %)[[$msg.get("svn.configsheet.customlist")&gt;&gt;${doc.fullName}?action=custom||class="button"]](%%)
+    #end
+
+    #if($request.action)
+      $msg.get("svn.configsheet.debug"):
+
+      $svnr.getDebug()
+    #end
+  #end
 {{/velocity}}
 </content>
 </xwikidoc>
