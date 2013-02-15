@@ -267,7 +267,8 @@ width:auto;
 
     #if(!$request.action)
       #set($class = $doc.getObject('SVNCode.SVNConfigClass').xWikiClass)
-
+	  ## statusDisplayObj is used for hiding status property value when saveStatus is 'no'
+      #set($statusDisplayObj = $doc.getObject('SVNCode.SVNConfigClass'))
       #foreach($prop in $class.properties)
          #set($tooltip = $prop.propertyClass.getTooltip($context.context))
          **$doc.displayPrettyName($prop.name)** #if($tooltip!="SVNCode.SVNConfigClass_${prop.name}_tooltip")//(${tooltip})//#end
@@ -292,7 +293,9 @@ width:auto;
             &lt;/script&gt;
           {{/html}}
          #else
-            $doc.display($prop.getName())
+          #if($prop.getName() != 'status' || $statusDisplayObj.getProperty('saveStatus').getValue() == 1)  
+             $doc.display($prop.getName())
+          #end
          #end
 
 
