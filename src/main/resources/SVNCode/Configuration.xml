@@ -12,8 +12,8 @@
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
   <creationDate>1360766653000</creationDate>
-  <date>1360837936000</date>
-  <contentUpdateDate>1360766699000</contentUpdateDate>
+  <date>1361186415000</date>
+  <contentUpdateDate>1361186415000</contentUpdateDate>
   <version>1.1</version>
   <title>Configuration</title>
   <template/>
@@ -182,13 +182,13 @@
       <codeToExecute/>
     </property>
     <property>
-      <configurationClass/>
+      <configurationClass>SVNCode.CustomConfigurationClass</configurationClass>
     </property>
     <property>
       <configureGlobally>0</configureGlobally>
     </property>
     <property>
-      <displayInSection>General</displayInSection>
+      <displayInSection>SVN</displayInSection>
     </property>
     <property>
       <heading/>
@@ -200,7 +200,9 @@
       <linkPrefix/>
     </property>
     <property>
-      <propertiesToShow/>
+      <propertiesToShow>
+        <value>displayDebug</value>
+      </propertiesToShow>
     </property>
   </object>
   <content/>
