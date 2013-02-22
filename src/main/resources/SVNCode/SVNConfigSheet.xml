@@ -254,6 +254,9 @@ width:auto;
   </object>
   <content>{{velocity}}
   $xwiki.ssx.use('SVNCode.SVNConfigSheet')##
+  #set ($configDoc = $xwiki.getDocument('SVNCode.Configuration'))
+  ## configObj is used to display or hide debug messages
+  #set ($configObj = $configDoc.getObject('SVNCode.CustomConfigurationClass'))
 
   #if ("$!request.action" == "compare")
     = $msg.get('svn.configsheet.compare.title'): $request.page =
@@ -446,7 +449,7 @@ width:auto;
       (% class="buttonwrapper" %)[[$msg.get("svn.configsheet.listpages")&gt;&gt;${doc.fullName}?action=list||class="button"]](%%)  (% class="buttonwrapper" %)[[$msg.get("svn.configsheet.customlist")&gt;&gt;${doc.fullName}?action=custom||class="button"]](%%)
     #end
 
-    #if($request.action)
+    #if($request.action &amp;&amp; $configObj.getProperty('displayDebug').getValue() == 1)
       $msg.get("svn.configsheet.debug"):
 
       $svnr.getDebug()

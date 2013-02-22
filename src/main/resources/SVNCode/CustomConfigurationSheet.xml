@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xwikidoc>
+  <web>SVNCode</web>
+  <name>CustomConfigurationSheet</name>
+  <language/>
+  <defaultLanguage/>
+  <translation>0</translation>
+  <parent>SVNCode.CustomConfigurationClass</parent>
+  <creator>xwiki:XWiki.Admin</creator>
+  <author>xwiki:XWiki.Admin</author>
+  <customClass/>
+  <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
+  <creationDate>1360766438000</creationDate>
+  <date>1360766438000</date>
+  <contentUpdateDate>1360766438000</contentUpdateDate>
+  <version>1.1</version>
+  <title>#if($doc.name == 'CustomConfigurationSheet')CustomConfiguration Sheet#{else}$services.display.title($doc, {'displayerHint': 'default'})#end</title>
+  <template/>
+  <defaultTemplate/>
+  <validationScript/>
+  <comment/>
+  <minorEdit>false</minorEdit>
+  <syntaxId>xwiki/2.1</syntaxId>
+  <hidden>false</hidden>
+  <content>{{velocity}}
+## You can modify this page to customize the presentation of your object.
+## At first you should keep the default presentation and just save the document.
+
+#set($class = $doc.getObject('SVNCode.CustomConfigurationClass').xWikiClass)
+#foreach($prop in $class.properties)
+  ; $prop.prettyName
+  : $doc.display($prop.getName())
+#end
+{{/velocity}}</content>
+</xwikidoc>
