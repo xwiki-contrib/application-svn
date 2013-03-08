@@ -36,7 +36,21 @@
   <packaging>xar</packaging>
   <name>XWiki SVN Application</name>
   <description>Allows concurrent development on multiple servers and simplifies publishing XWiki applications to SVN.</description>
-
+  <properties>
+    <!-- Don't run CLIRR here since there's no Java code. -->
+    <xwiki.clirr.skip>true</xwiki.clirr.skip>
+  </properties>
+  <scm>
+    <connection>scm:git:git://github.com/xwiki-contrib/application-svn.git</connection>
+    <developerConnection>scm:git:git@github.com:xwiki-contrib/application-svn.git</developerConnection>
+    <url>https://github.com/xwiki-contrib/application-svn.git</url>
+  </scm>
+  <developers>
+    <developer>
+      <id>ldubost</id>
+      <name>Ludovic Dubost</name>
+    </developer>
+  </developers>
   <build>
     <extensions>
       <extension>
@@ -55,4 +69,11 @@
       </plugins>
     </pluginManagement>
   </build>
+  <distributionManagement>
+    <repository>
+      <id>xwiki-staging</id>
+      <name>XWiki Staging Repository</name>
+      <url>http://nexus.xwiki.org/nexus/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
 </project>
