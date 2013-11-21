@@ -254,14 +254,15 @@ width:auto;
   </object>
   <content>{{velocity}}
   $xwiki.ssx.use('SVNCode.SVNConfigSheet')##
+  #set($discard = $services.localization.use('document', 'SVNCode.Translations'))
   #set ($configDoc = $xwiki.getDocument('SVNCode.Configuration'))
   ## configObj is used to display or hide debug messages
   #set ($configObj = $configDoc.getObject('SVNCode.CustomConfigurationClass'))
 
   #if ("$!request.action" == "compare")
-    = $msg.get('svn.configsheet.compare.title'): $request.page =
+    = $services.localization.render('svn.configsheet.compare.title'): $request.page =
   #else
-    = $msg.get("svn.configsheet.title"): $doc.name =
+    = $services.localization.render("svn.configsheet.title"): $doc.name =
   #end
 
   #if(!$xwiki.hasProgrammingRights())
@@ -328,18 +329,18 @@ width:auto;
       {{html wiki=true clean=false}}
         &lt;form action="" method="get" class="xform"&gt;
           &lt;input type="hidden" name="action" value="list" /&gt;
-          $msg.get("svn.configsheet.custom.spacelist"): &lt;input type="text" name="spaces" value="" class="svnInput" /&gt; &lt;span class="buttonwrapper"&gt; &lt;input type="submit" class="button" value="$msg.get("svn.configsheet.listpages")" /&gt;&lt;/span&gt;
+          $services.localization.render("svn.configsheet.custom.spacelist"): &lt;input type="text" name="spaces" value="" class="svnInput" /&gt; &lt;span class="buttonwrapper"&gt; &lt;input type="submit" class="button" value="$services.localization.render("svn.configsheet.listpages")" /&gt;&lt;/span&gt;
         &lt;/form&gt;
         &lt;form action="" method="get" class="xform"&gt;
           &lt;input type="hidden" name="action" value="list" /&gt;
-          $msg.get("svn.configsheet.custom.space"): &lt;select name="spaces" class="svnSelect"&gt;
+          $services.localization.render("svn.configsheet.custom.space"): &lt;select name="spaces" class="svnSelect"&gt;
           #foreach($space in $xwiki.spaces)
             &lt;option value="$space"&gt;$space&lt;/option&gt;
           #end
 
           &lt;/select&gt;
           &lt;span class="buttonwrapper"&gt;
-            &lt;input type="submit" class="button" value="$msg.get("svn.configsheet.listpages")" /&gt;
+            &lt;input type="submit" class="button" value="$services.localization.render("svn.configsheet.listpages")" /&gt;
           &lt;/span&gt;
         &lt;/form&gt;
       {{/html}}  
@@ -355,11 +356,11 @@ width:auto;
               #set($status = $cmap.get($page))
 
               ## encode the language of the document after the document name, after a dot. Will be processed on commit
-              &lt;li&gt;$status.status &lt;input type="checkbox" name="page" value="${status.fullname}.$!{status.language}" /&gt; ${page} &lt;a href=$xwiki.getURL(${doc.Name}, 'view', "action=compare&amp;page=${status.fullname}&amp;svnlanguage=${status.language}&amp;spaces=$!{spaces}") target="_blank" title="$msg.get("svn.configsheet.viewdiff")"&gt;&lt;img src = "$xwiki.getSkinFile('icons/silk/page_white_code.png')" alt="$msg.get("svn.configsheet.viewdiff")" /&gt;&lt;/a&gt;
+              &lt;li&gt;$status.status &lt;input type="checkbox" name="page" value="${status.fullname}.$!{status.language}" /&gt; ${page} &lt;a href=$xwiki.getURL(${doc.Name}, 'view', "action=compare&amp;page=${status.fullname}&amp;svnlanguage=${status.language}&amp;spaces=$!{spaces}") target="_blank" title="$services.localization.render("svn.configsheet.viewdiff")"&gt;&lt;img src = "$xwiki.getSkinFile('icons/silk/page_white_code.png')" alt="$services.localization.render("svn.configsheet.viewdiff")" /&gt;&lt;/a&gt;
             #end
 
           &lt;/ul&gt;
-          &lt;input type="submit" class="button" name="commit" value="$msg.get("svn.configsheet.commitall")" /&gt; &lt;input type="submit" class="button" name="update" value="$msg.get("svn.configsheet.updateall")" /&gt; &lt;input type="submit" class="button" name="export" value="$msg.get("svn.configsheet.exportall")" /&gt;
+          &lt;input type="submit" class="button" name="commit" value="$services.localization.render("svn.configsheet.commitall")" /&gt; &lt;input type="submit" class="button" name="update" value="$services.localization.render("svn.configsheet.updateall")" /&gt; &lt;input type="submit" class="button" name="export" value="$services.localization.render("svn.configsheet.exportall")" /&gt;
         &lt;/form&gt;
       {{/html}}
     #elseif($request.export)
@@ -376,17 +377,17 @@ width:auto;
       #end
       #set($list = $svnr.updatePages($pagelist))
 
-      $msg.get("svn.configsheet.pagesupdated")
+      $services.localization.render("svn.configsheet.pagesupdated")
 
       #foreach($page in $list.keySet())
         * $page
       #end
 
-      (% class="buttonwrapper" %)msg.get("svn.configsheet.backtolist")&gt;&gt;${doc.fullName}?action=list||class="button"]](%%)  (% class="buttonwrapper" %)[[$msg.get("svn.configsheet.backtocustom")&gt;&gt;${doc.fullName}?action=custom||class="button"]](%%)
+      (% class="buttonwrapper" %)services.localization.render("svn.configsheet.backtolist")&gt;&gt;${doc.fullName}?action=list||class="button"]](%%)  (% class="buttonwrapper" %)[[$services.localization.render("svn.configsheet.backtocustom")&gt;&gt;${doc.fullName}?action=custom||class="button"]](%%)
 
       ## COMMIT ACTION with confirm
     #elseif($request.action=="commit" &amp;&amp; $request.confirm=="1")
-      $msg.get("svn.configsheet.committingpages"):
+      $services.localization.render("svn.configsheet.committingpages"):
 
       #set($pagelist = $util.arrayList)
       #foreach($page in $request.getParameterValues("page"))
@@ -396,14 +397,14 @@ width:auto;
 
       $svnr.commitFiles($pagelist, $request.message)
 
-      $msg.get("svn.configsheet.committsuccessfull")
+      $services.localization.render("svn.configsheet.committsuccessfull")
 
-     (% class="buttonwrapper" %)[[$msg.get("svn.configsheet.backtolist")&gt;&gt;${doc.fullName}?action=list||class="button"]](%%)  (% class="buttonwrapper" %)[[$msg.get("svn.configsheet.backtocustom")&gt;&gt;${doc.fullName}?action=custom||class="button"]](%%)
+     (% class="buttonwrapper" %)[[$services.localization.render("svn.configsheet.backtolist")&gt;&gt;${doc.fullName}?action=list||class="button"]](%%)  (% class="buttonwrapper" %)[[$services.localization.render("svn.configsheet.backtocustom")&gt;&gt;${doc.fullName}?action=custom||class="button"]](%%)
 
      ## COMMIT ACTION before confirm
    #elseif($request.action=="commit")
       ## confirm commit
-      $msg.get("svn.configsheet.confirmcommittingpage")
+      $services.localization.render("svn.configsheet.confirmcommittingpage")
 
       {{html wiki=true}}
         &lt;form action="$doc.name" method="post" class="xform"&gt;
@@ -418,7 +419,7 @@ width:auto;
           #end
 
 
-          $msg.get("svn.configsheet.commitmessage"):
+          $services.localization.render("svn.configsheet.commitmessage"):
           &lt;br /&gt;
           &lt;textarea name="message" rows="5" cols="80"&gt;
           &lt;/textarea&gt;
@@ -446,11 +447,11 @@ width:auto;
 
       ## OTHER ACTION
     #else
-      (% class="buttonwrapper" %)[[$msg.get("svn.configsheet.listpages")&gt;&gt;${doc.fullName}?action=list||class="button"]](%%)  (% class="buttonwrapper" %)[[$msg.get("svn.configsheet.customlist")&gt;&gt;${doc.fullName}?action=custom||class="button"]](%%)
+      (% class="buttonwrapper" %)[[$services.localization.render("svn.configsheet.listpages")&gt;&gt;${doc.fullName}?action=list||class="button"]](%%)  (% class="buttonwrapper" %)[[$services.localization.render("svn.configsheet.customlist")&gt;&gt;${doc.fullName}?action=custom||class="button"]](%%)
     #end
 
     #if($request.action &amp;&amp; $configObj.getProperty('displayDebug').getValue() == 1)
-      $msg.get("svn.configsheet.debug"):
+      $services.localization.render("svn.configsheet.debug"):
 
       $svnr.getDebug()
     #end

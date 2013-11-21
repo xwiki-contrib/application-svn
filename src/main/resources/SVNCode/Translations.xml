@@ -23,6 +23,41 @@
   <minorEdit>false</minorEdit>
   <syntaxId>xwiki/2.0</syntaxId>
   <hidden>false</hidden>
+  <object>
+    <class>
+      <name>XWiki.TranslationDocumentClass</name>
+      <customClass></customClass>
+      <customMapping></customMapping>
+      <defaultViewSheet></defaultViewSheet>
+      <defaultEditSheet></defaultEditSheet>
+      <defaultWeb></defaultWeb>
+      <nameField></nameField>
+      <validationScript></validationScript>
+      <scope>
+        <cache>0</cache>
+        <disabled>0</disabled>
+        <displayType>select</displayType>
+        <multiSelect>0</multiSelect>
+        <name>scope</name>
+        <number>1</number>
+        <prettyName>Scope</prettyName>
+        <relationalStorage>0</relationalStorage>
+        <separator> </separator>
+        <separators> ,|</separators>
+        <size>1</size>
+        <unmodifiable>0</unmodifiable>
+        <values>GLOBAL|WIKI|USER|ON_DEMAND</values>
+        <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
+      </scope>
+    </class>
+    <name>SVNCode.Translations</name>
+    <number>0</number>
+    <className>XWiki.TranslationDocumentClass</className>
+    <guid>2dae6616-c2c1-43cd-8bcb-32c512932879</guid>
+    <property>
+      <scope>ON_DEMAND</scope>
+    </property>
+  </object>
   <content>svn.title=SVN Commit Application
 svn.description=Welcome to the SVN Commit App. You can configure SVN repositories to connect to your wiki and commit your wiki content in these repositories.
 svn.currentconfigs.title=Current SVN Configs

@@ -25,9 +25,10 @@
   <hidden>false</hidden>
   <content>{{velocity}}
 $xwiki.ssx.use('SVNCode.SVNConfigSheet')##
+#set($discard = $services.localization.use('document', 'SVNCode.Translations'))
 #if($request.title)
  #if($request.title=="")
-  {{warning}}$msg.get("svn.createnewsvnconfig.error.titlemissing"){{/warning}}
+  {{warning}}$services.localization.render("svn.createnewsvnconfig.error.titlemissing"){{/warning}}
  #else
   #set($docname = $xwiki.getUniquePageName($doc.web, $request.title))
   #set($newdoc = $xwiki.getDocument("${doc.web}.${docname}"))
@@ -39,13 +40,13 @@ $xwiki.ssx.use('SVNCode.SVNConfigSheet')##
   $response.sendRedirect($newdoc.getURL())
  #end
 #else
-$msg.get("svn.description")
+$services.localization.render("svn.description")
 
-== $msg.get("svn.currentconfigs.title") ==
+== $services.localization.render("svn.currentconfigs.title") ==
 
 #set($list = $xwiki.searchDocuments(", BaseObject as obj where doc.fullName=obj.name and obj.className='SVNCode.SVNConfigClass' and doc.fullName&lt;&gt;'SVNCode.SVNConfigTemplate'"))
 #if($list.size()==0)
-$msg.get("svn.currentconfigs.noconfigs")
+$services.localization.render("svn.currentconfigs.noconfigs")
 #else
 #foreach($item in $list)
  #set($itemTitle = $xwiki.getDocument($item).getDisplayTitle())
@@ -54,15 +55,15 @@ $msg.get("svn.currentconfigs.noconfigs")
 #end
 #end
 
-== $msg.get("svn.createnewconfig") ==
+== $services.localization.render("svn.createnewconfig") ==
 
 {{html}}
 &lt;form action="" class="xform"&gt;
-  &lt;label for="input_id1"&gt;$msg.get("svn.title"):&lt;/label&gt;
+  &lt;label for="input_id1"&gt;$services.localization.render("svn.title"):&lt;/label&gt;
  &lt;input id="input_id1" type="text" name="title"  value="" class="svnInput" /&gt;
 
    &lt;span class="buttonwrapper"&gt;
-     &lt;input class="button" type="submit" value="$msg.get("svn.createnewconfig")" /&gt;
+     &lt;input class="button" type="submit" value="$services.localization.render("svn.createnewconfig")" /&gt;
    &lt;/span&gt;
 &lt;/form&gt;
 {{/html}}
