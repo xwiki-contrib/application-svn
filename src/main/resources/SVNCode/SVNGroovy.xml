@@ -36902,6 +36902,12 @@ import org.tmatesoft.svn.core.internal.io.fs.FSRepositoryFactory;
 import org.tmatesoft.svn.core.internal.io.svn.SVNRepositoryFactoryImpl;
 import org.tmatesoft.svn.core.io.diff.SVNDeltaGenerator;
 import com.xpn.xwiki.doc.XWikiDocument;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.Node;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.SAXReader;
+import org.dom4j.io.XMLWriter;
 
 public class SVNLogReader {
     def xwiki;
@@ -36917,6 +36923,103 @@ public class SVNLogReader {
     def defaultUser = "";
     def sdebug = "";
     def status = new HashMap();
+    def pretty = true;
+    def xarformat = true;
+
+    static final String AUTHOR = "xwiki:XWiki.Admin";
+    static final String VERSION = "1.1";
+
+    /**
+     * Class XWikiXMLWriter copied from the Maven XAR plugin and adpated for Groovy idiocracies.
+     */
+    public class XWikiXMLWriter extends XMLWriter
+    {
+        /**
+         * True if we use an output format.
+         */
+        private boolean useFormat;
+
+        /**
+         * @param output the stream where to write the XML
+         * @throws UnsupportedEncodingException in case encoding issue
+         */
+        public XWikiXMLWriter(OutputStream output) throws UnsupportedEncodingException
+        {
+            super(output);
+        }
+
+        /**
+         * @param output the stream where to write the XML
+         * @param format the style to use when outputting the XML
+         * @throws UnsupportedEncodingException in case encoding issue
+         */
+        public XWikiXMLWriter(OutputStream output, OutputFormat format) throws UnsupportedEncodingException
+        {
+            super(output, format);
+            this.useFormat = true;
+        }
+
+        @Override
+        protected void writeComment(String text) throws IOException
+        {
+            super.writeComment(text);
+
+            // Add a new line after the license declaration
+            if (text.contains("See the NOTICE file distributed with this work for additional")) {
+                println();
+            }
+        }
+
+        @Override
+        protected void writeNodeText(Node node) throws IOException
+        {
+            if (this.useFormat &amp;&amp; node.getText().trim().length() == 0) {
+              // Check if parent node contains non text nodes
+                boolean containsNonTextNode = false;
+                for (Object object : node.getParent().content()) {
+                    Node objectNode = (Node) object;
+                    if (objectNode.getNodeType() != Node.TEXT_NODE) {
+                        containsNonTextNode = true;
+                        break;
+                    }
+                }
+                if (containsNonTextNode) {
+                    // Don't do anything, i.e. don't print the current text node
+                } else {
+                    super.writeNodeText(node);
+                }
+            } else {
+                super.writeNodeText(node);
+            }
+        }
+
+        @Override
+        protected void writePrintln() throws IOException
+        {
+            // We need to reimplement this method because of a bug (bad logic) in the original writePrintln() which checks
+            // the last output char to decide whether to print a NL or not:
+            //  ...3&lt;/a&gt;&lt;/b&gt; --&gt; ...3&lt;/a&gt;\n&lt;/b&gt;
+            // but
+            //  ...3\n&lt;/a&gt;&lt;/b&gt; --&gt; ...3\n&lt;/a&gt;&lt;/b&gt;
+            // and
+            //  ...3\n&lt;/a&gt;\n&lt;/b&gt; --&gt; ...3\n&lt;/a&gt;&lt;/b&gt;
+            if (this.useFormat) {
+                this.writer.write(getOutputFormat().getLineSeparator());
+            }
+        }
+
+        /**
+         * Overwrite the XMLWriter#getProperty() function.
+         * Properly route local field access, since Groovy is stupid !
+         */
+        def getProperty(String name) {
+           try {
+             return getMetaClass().getProperty(this, name);
+           } catch (MissingPropertyException mpe) {
+             return super.getProperty(name)
+           }
+        }
+    }
 
     public setXWiki(xwiki, context) {
       this.xwiki = xwiki;
@@ -36937,7 +37040,8 @@ public class SVNLogReader {
        this.defaultDate = configdoc.getValue("defaultdate");
        this.defaultUser = configdoc.getValue("defaultuser");
        this.status = getStatus(configdoc.getValue("status"));
-
+       this.pretty = configdoc.getValue("prettyXML") != 0;
+       this.xarformat = configdoc.getValue("xarFormat") == 1;
        debug("Date:" + this.defaultDate);
     }
 
@@ -37224,6 +37328,88 @@ public class SVNLogReader {
         return baos.toByteArray();
     }
 
+    /**
+     * Copied from the XAR maven plugin.
+     */
+    public format(Document domdoc, String defaultLanguage) throws Exception
+    {
+        Node node = domdoc.selectSingleNode('xwikidoc/author');
+        if (node != null) {
+            node.setText(AUTHOR);
+        }
+        node = domdoc.selectSingleNode('xwikidoc/contentAuthor');
+        if (node != null) {
+            node.setText(AUTHOR);
+        }
+        node = domdoc.selectSingleNode('xwikidoc/creator');
+        if (node != null) {
+            node.setText(AUTHOR);
+        }
+        node = domdoc.selectSingleNode('xwikidoc/version');
+        if (node != null) {
+            node.setText(VERSION);
+        }
+        node = domdoc.selectSingleNode('xwikidoc/minorEdit');
+        if (node != null) {
+            node.setText("false");
+        }
+
+        // Also update the attachment authors
+        for (Object attachmentAuthorNode : domdoc.selectNodes('xwikidoc/attachment/author')) {
+            ((Node) attachmentAuthorNode).setText(AUTHOR);
+        }
+
+        // Set the default language
+        Element element = (Element) domdoc.selectSingleNode('xwikidoc/defaultLanguage');
+        if (element != null) {
+            if (StringUtils.isEmpty(defaultLanguage)) {
+                removeContent(element);
+            } else {
+                element.setText(defaultLanguage);
+            }
+        }
+
+        // Remove any content of the &lt;comment&gt; element
+        element = (Element) domdoc.selectSingleNode('xwikidoc/comment');
+        if (element != null) {
+            removeContent(element);
+        }
+    }
+
+    /**
+     * Copied from the XAR maven plugin.
+     */
+    public removeContent(Element element)
+    {
+        if (element.hasContent()) {
+            ((Node) element.content().get(0)).detach();
+        }
+    }
+
+    /**
+     * Adapted from the XAR maven plugin.
+     */
+    public format(String xml, String defaultLanguage) throws Exception
+    {
+        InputStream bais = new ByteArrayInputStream(xml.getBytes('UTF-8'));
+        SAXReader reader = new SAXReader();
+        Document domdoc = reader.read(bais);
+        format(domdoc, defaultLanguage);
+        XMLWriter writer;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        if (pretty) {
+            OutputFormat format = new OutputFormat("  ", true, "UTF-8");
+            format.setExpandEmptyElements(false);
+            writer = new XWikiXMLWriter(baos, format);
+        } else {
+            writer = new XWikiXMLWriter(baos);
+        }
+        writer.write(domdoc);
+        writer.close();
+
+        return baos.toString("UTF-8");
+    }
+
     public getXML(pagedoc) {
         def clonedDoc = pagedoc.document.clone();
 
@@ -37254,8 +37440,11 @@ public class SVNLogReader {
 
         clonedDoc.setComment("");
         clonedDoc.setMinorEdit(false);
-        def c = clonedDoc.toXML(true, false, true, false, context.getContext())
-        return c.trim().replaceAll("[\r]","");
+        if (xarformat) {
+          return format(clonedDoc.toXML(true, false, true, false, context.getContext()), clonedDoc.getDefaultLanguage());
+        } else {
+          return clonedDoc.toXML(true, false, true, false, context.getContext()).trim().replaceAll("[\r]","");
+        }
     }
 
     public commitFile(pagedoc, message) {

@@ -64,7 +64,9 @@ SVNCode.SVNConfigClass_defaultuser=Default user
 SVNCode.SVNConfigClass_defaultuser_tooltip=User to set all pages we commit to
 SVNCode.SVNConfigClass_saveStatus=Save Status
 SVNCode.SVNConfigClass_defaultspace_tooltip=Status to save on commit
-
-
+SVNCode.SVNConfigClass_prettyXML=Use human readable XML
+SVNCode.SVNConfigClass_prettyXML_tooltip=Only used with XAR format, the default behavior is to be human readable
+SVNCode.SVNConfigClass_xarFormat=Format XML
+SVNCode.SVNConfigClass_xarFormat_tooltip=Format XML like mvn xar:format
 </content>
 </xwikidoc>
