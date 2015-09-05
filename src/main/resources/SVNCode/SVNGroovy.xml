@@ -36908,6 +36908,8 @@ import org.dom4j.Node;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
+import org.xwiki.environment.Environment;
+import com.xpn.xwiki.web.Utils;
 
 public class SVNLogReader {
     def xwiki;
@@ -37119,6 +37121,9 @@ public class SVNLogReader {
          */
         setupLibrary();
 
+        def permDir = Utils.getComponent(Environment.class).getPermanentDirectory();
+        def confDir = new File(permDir, 'subversion');
+
         try {
             /*
              * Creates an instance of SVNRepository to work with the repository.
@@ -37152,7 +37157,7 @@ public class SVNLogReader {
          *  
          * You may also skip this point - anonymous access will be used. 
          */
-        ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(username, password);
+        ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(confDir, username, password);
         repository.setAuthenticationManager(authManager);
 
         try {
