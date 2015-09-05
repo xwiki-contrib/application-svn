@@ -306,7 +306,7 @@ width:auto;
       #end
     #end
     #if($request.action)
-      #set($svnr = $xwiki.parseGroovyFromPage("SVNCode.SVNGroovy","SVNCode.SVNGroovy"))
+      #set($svnr = $xwiki.parseGroovyFromPage("SVNCode.SVNGroovy"))
       #set($ok = $svnr.setXWiki($xwiki, $context))
 
       #if(!$svnr.hasProgrammingRights())
