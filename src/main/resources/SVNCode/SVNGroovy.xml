@@ -826,7 +826,7 @@ public class SVNLogReader {
 
         def c = getFileContentAsString(space, page, language);
         def changed = false;
-        if (c==null || !c.equals(xml))
+        if (c==null || !c.equals(xml.trim()))
             changed = true;
 
         if (changed) {
@@ -1046,10 +1046,9 @@ public class SVNLogReader {
 // if (page.contains("Translations"))
 // debug("WikiContent: ${wikicontent}")
            def svncontent = getFileContentAsString(pagedoc.getSpace(), pagedoc.getName(), pagedoc.getLanguage())
-           svncontent = (svncontent == null) ? null : svncontent.trim();
 // if (page.contains("Translations"))
 //  debug("SVNContent: ${svncontent}")
-           if (!wikicontent.equals(svncontent)) {
+           if (!wikicontent.trim().equals(svncontent)) {
             def filePath = getFilePath(pagedoc);
             def pageStatus = getPageStatus(getStatusPath(pagedoc));
             if (pageStatus==null) {
@@ -1168,7 +1167,7 @@ public class SVNLogReader {
            def wikicontent = getXML(pagedoc);
            def svncontent = getFileContentAsString(pagedoc.getSpace(), pagedoc.getName(), pagedoc.getLanguage())
            def svnversion = "";
-           if (!wikicontent.equals(svncontent)) {
+           if (!wikicontent.trim().equals(svncontent)) {
             def filePath = getFilePath(pagedoc);
             def pageStatus = getPageStatus(getStatusPath(pagedoc));
             if (pageStatus==null) {
