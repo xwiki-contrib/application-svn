@@ -60,6 +60,7 @@ svn.configsheet.commit=Commit
 svn.configsheet.viewdiff=View Diff
 svn.configsheet.committingpages=Committing the following pages
 svn.configsheet.committsuccessfull=Commit finished successfully
+svn.configsheet.commitunsuccessful=Une erreur a empêché d'effectuer ce commit, Veuillez contacter votre administrateur pour résoudre le souci.
 svn.configsheet.backtolist=Back to List of pages to commit
 svn.configsheet.backtocustom=Back to Custom list of pages to commit
 svn.configsheet.confirmcommittingpage=Please confirm commiting the following page(s)

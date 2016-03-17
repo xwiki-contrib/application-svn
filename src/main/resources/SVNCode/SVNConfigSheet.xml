@@ -414,9 +414,12 @@ width:auto;
         #set($ok = $pagelist.add($page))
       #end
 
-      $svnr.commitFiles($pagelist, $request.message)
-
-      $services.localization.render("svn.configsheet.committsuccessfull")
+      #set($cResult = $svnr.commitFiles($pagelist, $request.message))
+      #if($cResult)
+        {{info}}$services.localization.render("svn.configsheet.committsuccessfull"){{/info}}
+      #else
+        {{error}}$services.localization.render("svn.configsheet.commitunsuccessful"){{/error}}
+      #end
 
      (% class="buttonwrapper" %)[[$services.localization.render("svn.configsheet.backtolist")&gt;&gt;${doc.fullName}?action=list||class="button"]](%%)  (% class="buttonwrapper" %)[[$services.localization.render("svn.configsheet.backtocustom")&gt;&gt;${doc.fullName}?action=custom||class="button"]](%%)
 
