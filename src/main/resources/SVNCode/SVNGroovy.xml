@@ -1381,6 +1381,24 @@ public class SVNLogReader {
         return entries;
     }
 
+    public getDocFromSVN(pagedoc) {
+        if (pagedoc.isNew()){
+            System.out.println("Document does not exist in the wiki");
+            return null;
+        }
+
+        def svnXml = getFileContentAsString(pagedoc.getSpace(), pagedoc.getName(), pagedoc.getLanguage());
+        if (svnXml == null){
+            System.out.println("Document does not exist in SVN");
+            return null;
+        }
+
+        def svnXDoc = new XWikiDocument();
+        svnXDoc.fromXML(svnXml);
+        com.xpn.xwiki.api.Document svnDoc = new com.xpn.xwiki.api.Document(svnXDoc, context.getContext());
+        return svnDoc;
+    
+	}
 
     public showXMLDiff(pagedoc) {
         def svnxml = getFileContentAsString(pagedoc.getSpace(), pagedoc.getName(), pagedoc.getLanguage());
