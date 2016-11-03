@@ -31,7 +31,7 @@
   </parent>
   <groupId>org.xwiki.contrib</groupId>
   <artifactId>xwiki-application-svn</artifactId>
-  <version>1.6</version>
+  <version>1.6-SNAPSHOT</version>
   <packaging>xar</packaging>
   <name>XWiki SVN Application</name>
   <description>Allows concurrent development on multiple servers and simplifies publishing XWiki applications to SVN.</description>
@@ -43,7 +43,7 @@
     <connection>scm:git:git://github.com/xwiki-contrib/application-svn.git</connection>
     <developerConnection>scm:git:git@github.com:xwiki-contrib/application-svn.git</developerConnection>
     <url>https://github.com/xwiki-contrib/application-svn.git</url>
-    <tag>xwiki-application-svn-1.6</tag>
+    <tag>HEAD</tag>
   </scm>
   <developers>
     <developer>
