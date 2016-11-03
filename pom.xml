@@ -49,6 +49,27 @@
     <developer>
       <id>ldubost</id>
       <name>Ludovic Dubost</name>
+      <organization>XWiki SAS</organization>
+    </developer>
+    <developer>
+      <id>lucaa</id>
+      <name>Anca Luca</name>
+      <organization>XWiki SAS</organization>
+    </developer>
+    <developer>
+      <id>pcojan</id>
+      <name>Paul Cojan</name>
+      <organization>XWiki SAS</organization>
+    </developer>
+    <developer>
+      <id>dgervalle</id>
+      <name>Denis Gervalle</name>
+      <organization>XWiki SAS</organization>
+    </developer>
+    <developer>
+      <id>DjeblounSidali</id>
+      <name>Sidali Djebloun</name>
+      <organization>XWiki SAS</organization>
     </developer>
   </developers>
   <dependencies>
