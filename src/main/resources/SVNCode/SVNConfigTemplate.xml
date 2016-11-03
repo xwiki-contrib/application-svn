@@ -123,7 +123,7 @@
       </repository>
       <savedlist>
         <cache>0</cache>
-        <classname>XWiki.SavedListClass</classname>
+        <classname>SVNCode.SavedListClass</classname>
         <customDisplay/>
         <disabled>0</disabled>
         <displayType>input</displayType>

@@ -45,7 +45,7 @@
   <content>{{velocity}}
 #set($ok = $response.setContentType("text/xml"))
 #set($input = $request.get("input").toLowerCase())
-#set($sql =  ", BaseObject as obj where doc.fullName=obj.name and obj.className='XWiki.SavedListClass' and lower(doc.title) like '%${input}%' order by doc.date desc")
+#set($sql =  ", BaseObject as obj where doc.fullName=obj.name and obj.className='SVNCode.SavedListClass' and lower(doc.title) like '%${input}%' order by doc.date desc")
 #set($queryResult = $xwiki.searchDocuments($sql, 30, 0))
 #set($results = $queryResult.toArray())
     &lt;results type="8"&gt;
