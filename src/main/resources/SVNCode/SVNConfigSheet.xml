@@ -389,8 +389,8 @@ width:auto;
                 #set($status = $cmap.get($page))
   
                 ## encode the language of the document after the document name, after a dot. Will be processed on commit
-                &lt;li&gt;$status.status &lt;input type="checkbox" name="page" value="${status.fullname}.$!{status.language}" /&gt; ${page} &lt;a href=$xwiki.getURL(${doc.Name}, 'view', "action=compare&amp;page=${status.fullname}&amp;svnlanguage=${status.language}&amp;spaces=$!{spaces}") target="_blank" title="$services.localization.render("svn.configsheet.viewdiff")"&gt;&lt;img src = "$xwiki.getSkinFile('icons/silk/page_white_code.png')" alt="$services.localization.render("svn.configsheet.viewdiff")" /&gt;&lt;/a&gt;
-                &lt;a href=$xwiki.getURL(${doc.Name}, 'view', "action=comparedoc&amp;page=${status.fullname}&amp;svnlanguage=${status.language}&amp;spaces=$!{spaces}") target="_blank" title="$services.localization.render("svn.configsheet.viewdocdiff")"&gt;&lt;img src = "$xwiki.getSkinFile('icons/silk/application_double.png')" alt="$services.localization.render("svn.configsheet.viewdocdiff")" /&gt;&lt;/a&gt;
+                &lt;li&gt;$status.status &lt;input type="checkbox" name="page" value="${status.fullname}.$!{status.language}" /&gt; ${page} &lt;a href=$xwiki.getURL(${doc.Name}, 'view', "action=compare&amp;page=$!{escapetool.url($status.fullname)}&amp;svnlanguage=${status.language}&amp;spaces=$!{escapetool.url($spaces)}") target="_blank" title="$services.localization.render("svn.configsheet.viewdiff")"&gt;&lt;img src = "$xwiki.getSkinFile('icons/silk/page_white_code.png')" alt="$services.localization.render("svn.configsheet.viewdiff")" /&gt;&lt;/a&gt;
+                &lt;a href=$xwiki.getURL(${doc.Name}, 'view', "action=comparedoc&amp;page=$!{escapetool.url($status.fullname)}&amp;svnlanguage=${status.language}&amp;spaces=$!{escapetool.url($spaces)}") target="_blank" title="$services.localization.render("svn.configsheet.viewdocdiff")"&gt;&lt;img src = "$xwiki.getSkinFile('icons/silk/application_double.png')" alt="$services.localization.render("svn.configsheet.viewdocdiff")" /&gt;&lt;/a&gt;
               #end
   
             &lt;/ul&gt;
