@@ -1131,7 +1131,10 @@ public class SVNLogReader {
         def list;
 
         if (!savedlist || savedlist=="") {
-         spaceList = Arrays.asList(StringUtils.split(spaces," ,"));
+         spaceList = new ArrayList();
+         for (spaceListVal in StringUtils.split(spaces,",")) {
+           spaceList.add(spaceListVal.trim());
+         }
          def sspaces = StringUtils.join(spaceList, "','");
          def sql = "select distinct doc.fullName from XWikiDocument as doc where doc.space in ('${sspaces}')";
          debug("Searching for ${sql}");
