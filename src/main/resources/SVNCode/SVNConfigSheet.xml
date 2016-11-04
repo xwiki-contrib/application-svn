@@ -302,17 +302,17 @@ width:auto;
   #else
     ## 
     #if(!$request.action)
+      (%class="xform full"%)(((
       #set($class = $doc.getObject('SVNCode.SVNConfigClass').xWikiClass)
 	  ## statusDisplayObj is used for hiding status property value when saveStatus is 'no'
       #set($statusDisplayObj = $doc.getObject('SVNCode.SVNConfigClass'))
       #foreach($prop in $class.properties)
          #set($tooltip = $prop.propertyClass.getTooltip($xcontext.context))
-         **$doc.displayPrettyName($prop.name)** #if($tooltip!="SVNCode.SVNConfigClass_${prop.name}_tooltip")//(${tooltip})//#end
-
+         ; {{html wiki="true"}}&lt;label&gt;$doc.displayPrettyName($prop.name)&lt;/label&gt; &lt;span class='xHint'&gt;#if($tooltip!="SVNCode.SVNConfigClass_${prop.name}_tooltip" &amp;&amp; "$!{tooltip}" != '')($!{tooltip})#end&lt;/span&gt;{{/html}}
          #if($xcontext.action=="inline"&amp;&amp;$prop.name=="savedlist")
            #set($path = $xwiki.getURL("SVNCode.SavedListSuggest", "view"))
            #set($script = $path + "?xpage=plain&amp;outputSyntax=plain&amp;")
-           {{html clean=false}}
+           : {{html clean=false}}
              &lt;input type="text" id="SVNCode.SVNConfigClass_0_savedlist" name="SVNCode.SVNConfigClass_0_savedlist" onfocus="tsuggest(this);" value="$!doc.getValue("savedlist")" /&gt;
              &lt;script type="text/javascript"&gt;
               // &lt;![CDATA[
@@ -330,12 +330,13 @@ width:auto;
           {{/html}}
          #else
           #if($prop.getName() != 'status' || $statusDisplayObj.getProperty('saveStatus').getValue() == 1)  
-             $doc.display($prop.getName())
+             : $doc.display($prop.getName())
           #end
          #end
 
 
       #end
+      )))
     #end
     #if($request.action)
       #set($svnr = $xwiki.parseGroovyFromPage("SVNCode.SVNGroovy"))
@@ -444,7 +445,7 @@ width:auto;
         $services.localization.render("svn.configsheet.confirmcommittingpage")
   
         {{html wiki=true}}
-          &lt;form action="$doc.name" method="post" class="xform"&gt;
+          &lt;form action="$doc.name" method="post" class="xform full"&gt;
             &lt;input type="hidden" name="action" value="commit" /&gt;
             &lt;input type="hidden" name="confirm" value="1" /&gt;
             &lt;input type="hidden" name="spaces" value="$!{spaces}" /&gt;
@@ -503,7 +504,9 @@ width:auto;
       #if($request.action)
         {{error}}$services.localization.render('svn.configsheet.repoiniterror'){{/error}}
       #else
-        (% class="buttonwrapper" %)[[$services.localization.render("svn.configsheet.listpages")>>${doc.fullName}?action=list||class="button"]](%%)  (% class="buttonwrapper" %)[[$services.localization.render("svn.configsheet.customlist")>>${doc.fullName}?action=custom||class="button"]](%%)
+        #if($xcontext.action != 'edit' &amp;&amp; $xcontext.action != 'inline')
+          (% class="buttonwrapper" %)[[$services.localization.render("svn.configsheet.listpages")&gt;&gt;${doc.fullName}?action=list||class="button"]](%%)  (% class="buttonwrapper" %)[[$services.localization.render("svn.configsheet.customlist")&gt;&gt;${doc.fullName}?action=custom||class="button"]](%%)
+        #end
       #end
     #end
     #if($request.action &amp;&amp; $configObj.getProperty('displayDebug').getValue() == 1)
