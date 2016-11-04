@@ -418,7 +418,7 @@ width:auto;
           * $page
         #end
   
-        (% class="buttonwrapper" %)services.localization.render("svn.configsheet.backtolist")&gt;&gt;${doc.fullName}?action=list||class="button"]](%%)  (% class="buttonwrapper" %)[[$services.localization.render("svn.configsheet.backtocustom")&gt;&gt;${doc.fullName}?action=custom||class="button"]](%%)
+        (% class="buttonwrapper" %)[[$services.localization.render("svn.configsheet.backtolist")&gt;&gt;${doc.fullName}?action=list||class="button"]](%%)  (% class="buttonwrapper" %)[[$services.localization.render("svn.configsheet.backtocustom")&gt;&gt;${doc.fullName}?action=custom||class="button"]](%%)
   
         ## COMMIT ACTION with confirm
       #elseif($request.action=="commit" &amp;&amp; $request.confirm=="1")
