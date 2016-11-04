@@ -42,7 +42,7 @@
   <comment/>
   <minorEdit>false</minorEdit>
   <syntaxId>xwiki/2.0</syntaxId>
-  <hidden>false</hidden>
+  <hidden>true</hidden>
   <content>svn.title=Application SVN
 svn.description=Bienvenue sur l'application SVN. Vous pouvez configurer votre repository SVN et commiter votre code XWiki dans ces votre repository.
 svn.currentconfigs.title=Current SVN Configs
