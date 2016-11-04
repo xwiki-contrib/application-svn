@@ -306,10 +306,10 @@ width:auto;
 	  ## statusDisplayObj is used for hiding status property value when saveStatus is 'no'
       #set($statusDisplayObj = $doc.getObject('SVNCode.SVNConfigClass'))
       #foreach($prop in $class.properties)
-         #set($tooltip = $prop.propertyClass.getTooltip($context.context))
+         #set($tooltip = $prop.propertyClass.getTooltip($xcontext.context))
          **$doc.displayPrettyName($prop.name)** #if($tooltip!="SVNCode.SVNConfigClass_${prop.name}_tooltip")//(${tooltip})//#end
 
-         #if($context.action=="inline"&amp;&amp;$prop.name=="savedlist")
+         #if($xcontext.action=="inline"&amp;&amp;$prop.name=="savedlist")
            #set($path = $xwiki.getURL("SVNCode.SavedListSuggest", "view"))
            #set($script = $path + "?xpage=plain&amp;outputSyntax=plain&amp;")
            {{html clean=false}}
@@ -339,7 +339,7 @@ width:auto;
     #end
     #if($request.action)
       #set($svnr = $xwiki.parseGroovyFromPage("SVNCode.SVNGroovy"))
-      #set($ok = $svnr.setXWiki($xwiki, $context))
+      #set($ok = $svnr.setXWiki($xwiki, $xcontext))
 
       #if(!$svnr.hasProgrammingRights())
         #warning("This application cannot work without programming rights on [[SVNCode.SVNGroovy]]. Resave this page as an admin and retry.")
@@ -403,7 +403,7 @@ width:auto;
           #set($ok = $pagelist.add($page))
         #end
         $svnr.exportPages($doc.name, $pagelist)
-        #set($ok = $context.setFinished(true))
+        #set($ok = $xcontext.setFinished(true))
       #elseif($request.update)
         #set($pagelist = $util.arrayList)
         #foreach($page in $request.getParameterValues("page"))
