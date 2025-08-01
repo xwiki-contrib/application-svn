@@ -41,7 +41,7 @@
   <validationScript/>
   <comment/>
   <minorEdit>false</minorEdit>
-  <syntaxId>xwiki/2.0</syntaxId>
+  <syntaxId>plain/1.0</syntaxId>
   <hidden>true</hidden>
   <content>svn.title=Application SVN
 svn.description=Bienvenue sur l'application SVN. Vous pouvez configurer votre repository SVN et commiter votre code XWiki dans ces votre repository.
