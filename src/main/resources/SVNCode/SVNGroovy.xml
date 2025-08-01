@@ -46,7 +46,7 @@
   <content>
 import java.util.Collection;
 import java.util.Iterator;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.tmatesoft.svn.core.*;
 import org.tmatesoft.svn.core.io.*;
 import org.tmatesoft.svn.core.wc.*;
